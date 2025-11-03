@@ -1,14 +1,19 @@
-FROM centos:7
-MAINTAINER reshma8466004811@gmail.com
+# Use Debian 12 as the base image
+FROM debian:12
 
-RUN yum install -y httpd zip unzip
-ADD https://www.free-css.com/assets/files/free-css-templates/download/page285/viking.zip /var/www/html/
+# Install Python (for serving simple web pages)
+RUN apt-get update && apt-get install -y python3 && apt-get clean
 
-WORKDIR /var/www/html/
-RUN unzip viking.zip
-RUN cp -rvf viking/* .
-RUN rm -rf viking viking.zip
+# Set the working directory
+WORKDIR /app
 
-CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
-EXPOSE 80 443
+# Create a simple index.html file with your message
+RUN echo "<h1>Hello from Docker running on port 80!</h1>" > index.html
+
+# Expose port 80
+EXPOSE 80
+
+# Run a simple HTTP server on port 80
+CMD ["python3", "-m", "http.server", "80"]
+
 
