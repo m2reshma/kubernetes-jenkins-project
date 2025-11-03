@@ -1,14 +1,14 @@
-FROM debian:12
+FROM centos:7
+MAINTAINER reshma8466004811@gmail.com
 
-# Install Apache
-RUN apt update && apt install -y apache2 && \
-    apt clean && rm -rf /var/lib/apt/lists/*
+RUN yum install -y httpd zip unzip
+ADD https://www.free-css.com/assets/files/free-css-templates/download/page285/viking.zip /var/www/html/
 
-# Create a simple default web page
-RUN echo "<h1>Hello from Debian Apache Docker!</h1>" > /var/www/html/index.html
+WORKDIR /var/www/html/
+RUN unzip viking.zip
+RUN cp -rvf viking/* .
+RUN rm -rf viking viking.zip
 
-# Expose port 80
-EXPOSE 80
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+EXPOSE 80 443
 
-# Start Apache in the foreground
-CMD ["apache2ctl", "-D", "FOREGROUND"]

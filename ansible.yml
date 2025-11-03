@@ -2,8 +2,12 @@
 - hosts: node
   become: true
   tasks:
+    - name: delete old deployment
+      command: kubectl delete -f /home/paul/deployment.yml
+    - name: delete old service
+      command: kubectl delete -f /home/paul/service.yml
     - name: Create new deployment
-      command: kubectl apply -f /home/jenkins-to-ansible/deployment.yml
+      command: kubectl apply -f /home/paul/deployment.yml
 
     - name: Create new service
-      command: kubectl apply -f /home/jenkins-to-ansible/service.yml
+      command: kubectl apply -f /home/paul/service.yml
