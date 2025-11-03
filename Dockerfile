@@ -1,19 +1,22 @@
-# Use Debian 12 as the base image
-FROM debian:12
+FROM debian:12-slim
 
-# Install Python (for serving simple web pages)
-RUN apt-get update && apt-get install -y python3 && apt-get clean
+# Install Apache2
+RUN apt-get update && apt-get install -y apache2 && apt-get clean
 
-# Set the working directory
-WORKDIR /app
+# Set environment variable for the message
+ENV MESSAGE="Hello from Debian! Running on port 8080."
 
-# Create a simple index.html file with your message
-RUN echo "<h1>Hello from Docker running on port 80!</h1>" > index.html
+# Create a simple HTML page with the message
+RUN echo "<html><body><h1>${MESSAGE}</h1></body></html>" > /var/www/html/index.html
 
-# Expose port 80
-EXPOSE 80
+# Expose port 8080
+EXPOSE 8080
 
-# Run a simple HTTP server on port 80
-CMD ["python3", "-m", "http.server", "80"]
+# Change Apache default port from 80 to 8080
+RUN sed -i 's/80/8080/g' /etc/apache2/ports.conf && \
+    sed -i 's/:80/:8080/g' /etc/apache2/sites-enabled/000-default.conf
+
+# Start Apache in the foreground
+CMD ["apachectl", "-D", "FOREGROUND"]
 
 
